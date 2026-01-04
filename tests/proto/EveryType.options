@@ -1,0 +1,20 @@
+.ParentMessage.NestedMessage.nested_int            max_count:4
+.AllTypes.one_str                                  max_size:32
+.AllTypes.one_bytes                                max_size:32
+.AllTypes.many_int32                               max_count:4
+.AllTypes.many_uint32                              max_count:4
+.AllTypes.many_sint32                              max_count:4
+.AllTypes.many_int64                               max_count:4
+.AllTypes.many_uint64                              max_count:4
+.AllTypes.many_sint64                              max_count:4
+.AllTypes.many_fixed32                             max_count:4
+.AllTypes.many_fixed64                             max_count:4
+.AllTypes.many_bool                                max_count:4
+.AllTypes.many_str                                 max_count:4 max_size:32
+.AllTypes.many_bytes                               max_count:4 max_size:32
+.AllTypes.many_float                               max_count:4
+.AllTypes.many_double                              max_count:4
+.AllTypes.many_sfixed32                            max_count:4
+.AllTypes.many_sfixed64                            max_count:4
+.AllTypes.selected_str                             max_size:32
+.AllTypes.selected_bytes                           max_size:32

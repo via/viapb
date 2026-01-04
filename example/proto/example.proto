@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+enum MyEnum {
+  SomeValue = 0;
+  AnotherValue = 1;
+}
+
+message SubMessage {
+  enum NegativeEnum {
+    SomeValue = 0;
+    LowValue = -2;
+    HighValue = 65535;
+  }
+
+  MyEnum type = 1;
+  string some_text = 2;
+};
+
+message MultiMessage {
+  int32 some_int = 1;
+  oneof some_oneof {
+    int32 part_one = 2;
+    string part_two = 3;
+  }
+}
+
+message MyMessage {
+  int32 some_integer = 1;
+  fixed32 some_fixed = 2;
+  SubMessage some_submsg = 3;
+
+  repeated int32 many_integers = 4;
+  repeated fixed32 many_fixed = 5;
+  repeated SubMessage many_submsg = 6;
+}
+
+
+

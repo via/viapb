@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+
+message LevelOne {
+  message LevelTwo {
+    int32 b = 1;
+    repeated LevelThree child = 2;
+
+    message LevelThree {
+      int32 c = 1;
+    }
+
+
+  }
+
+  int32 a = 1;
+  int32 b = 5;
+  int32 c = 6;
+  int32 d = 7;
+  int32 e = 8;
+  int32 f = 9;
+  LevelTwo child = 2;
+}
+

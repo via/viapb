@@ -1,0 +1,6 @@
+.SubMessage                 submsg_store: 64
+.SubMessage.some_text       max_size:16
+.MyMessage.many_submsg      max_count:4
+.MyMessage.many_integers    max_count:4
+.MyMessage.many_fixed       max_count:4
+.MultiMessage.part_two      max_size:16
