@@ -18,3 +18,5 @@
 .AllTypes.many_sfixed64                            max_count:4
 .AllTypes.selected_str                             max_size:32
 .AllTypes.selected_bytes                           max_size:32
+.AllTypes.many_msg                                 max_count:4
+.AllTypes.opt_string                               max_size:4

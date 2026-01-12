@@ -159,7 +159,7 @@ static unsigned pb_encode_float(uint8_t buf[4], const float value) {
 
 static unsigned pb_encode_double(uint8_t buf[8], const double value) {
   memcpy(buf, &value, 8);
-  return 4;
+  return 8;
 }
 
 static bool pb_decode_varint_uint64(uint64_t *value, pb_read_fn r, void *user) {

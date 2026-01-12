@@ -8,7 +8,7 @@ and sacrifices most of the flexibility that nanopb offers.  Such compromises as:
  - All REPEATED types are static bounded arrays
  - No ability to customize C naming convention or types
  - Only support proto3: No default values, label optional is default, no required fields
- - Requires C99, only tested with GCC
+ - Requires C11 (for anonymous unions), only tested with GCC
  - Relies heavily on automatic inlining, at a significant text size increase
  - Doesn't support multiple proto compilation units depending on each other: Entire descriptor set compiled to one source/header pair
  - In general, no features that I won't directly use
@@ -24,7 +24,7 @@ options file starts with a field path (delimited with `.`) and then can specify 
 .MyMessage.many_submsg      max_count:4
 ```
 
-Additionally, the path to a message type can have an option `submsg_size`, which will inline the serialization
+Additionally, the path to a message type can have an option `submsg_store`, which will inline the serialization
 of any submessages that are smaller than the given size.  This can increase performance, at the cost of increasing
 the stack frame usage by the provided amount.
 
@@ -36,18 +36,18 @@ protoc --include_imports -I proto -o out mymessages.proto
 
 Pass the FileDescriptorSet to stdin:
 ```
-python parse.py --file out --options viapb.options
+python generate.py --file out --options viapb.options
 ```
 
 
 For each proto file in the set, it will create a protofile.pb.h and
-protofile.pb.c, which in turn include viapb.h. Each C object exports three
+protofile.pb.c, which in turn include viapb.h. Each C object exports four
 functions for each message:
  - `size_t pb_sizeof_MessageName(const struct MessageName *)` - returns the encoded
-   size of the message
+   size of the message, more efficiently than encoding the message.
  - `bool pb_encode_MessageName(const struct MessageName *, pb_write_fn callback, void *ptr)` -
   encodes the struct, calling `pb_write_fn` with the contents of the serialized message.  The write callback will be called repeatedly with
-  small chunks, and ptr will be passed to the callback. False is returned is the callback returns false, or if an issue prevents full serialization of
+  small chunks, and ptr will be passed to the callback. False is returned if the callback returns false, or if an issue prevents full serialization of
   the message, such as an invalid size/length or enum value exceeding range.
  - `bool pb_encode_MessageName_to_buffer(uint8_t data[N], const struct MessageName *)` - Encodes the message to the passed data. N is replaced with
    the max serialized size of the message. False is returned is an issue prevented full serialization of the message, an invalid size/length or enum
@@ -79,5 +79,11 @@ bool success = pb_decode_MyMessage(&msg, pb_buffer_read, &reader);
 This project is licensed under the zlib license, found in LICENSE.zlib.  The generated code can be licensed in any way, though it includes the two
 headers found in this repo, which are zlib licensed.
 
-## TODO
- - Buffer (vs streaming) decoding
+## Stuff
+ No automation, but:
+ - black for formatting
+ - mypy for type checking
+ - example/ has a simple example on usage with a C program. The generated output
+   is commited to provide an example without having to clone/build
+ - tests/ has (the start of) an integration test to validate encode/decoder correctness. With all the python requirements installed, run `make
+   validate` in the tests directory

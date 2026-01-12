@@ -11,7 +11,7 @@ enum LargerEnum {
   SixteenThousand = 16000;
 }
 
-enum Negative {
+enum NegativeEnum {
   NegZero = 0;
   Minus14 = -14;
 }
@@ -99,6 +99,18 @@ message AllTypes {
 
     sfixed32 selected_sfixed32 = 44;
     sfixed64 selected_sfixed64 = 45;
+
+    ParentMessage selected_msg = 46;
   }
+
+  ParentMessage one_msg = 47;
+  repeated ParentMessage many_msg = 48;
+
+  RegularEnum reg_enum = 49;
+  LargerEnum larger_enum = 50;
+  NegativeEnum neg_enum = 51;
+
+  optional int32 opt_int32 = 52;
+  optional string opt_string = 53;
 }
 
