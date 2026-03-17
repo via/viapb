@@ -972,6 +972,7 @@ def generate_field_decode_statements(f: PpbField) -> str:
                 "  if (!pb_decode_%s(&%s, pb_bounded_read, &br)) { return false; }\n"
                 % (field_type_name_to_cname(f.type_name), fieldname)
             )
+            result += "  if (br.len != 0) return false;\n"
             if not f.is_repeated and not f.oneof:
                 result += "  msg->has_%s = true;\n" % (f.name)
         else:
@@ -988,6 +989,7 @@ def generate_field_decode_statements(f: PpbField) -> str:
             )
             result += "    msg->%s_count++;\n" % (f.name)
             result += "  }\n"
+            result += "  if (br.len != 0) return false;\n"
 
         if f.is_repeated and f.fieldtype.pbtype in ["STRING", "MESSAGE", "BYTES"]:
             result += "  msg->%s_count++;\n" % (f.name)

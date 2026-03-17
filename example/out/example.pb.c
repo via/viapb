@@ -369,6 +369,7 @@ bool pb_decode_MyMessage(struct MyMessage *msg, pb_read_fn r, void *user) {
       if (!pb_decode_varint_uint32(&length, r, user)) { return false; }
       struct pb_bounded_reader br = { .r = r, .user = user, .len = length };
       if (!pb_decode_SubMessage(&msg->some_submsg, pb_bounded_read, &br)) { return false; }
+      if (br.len != 0) return false;
       msg->has_some_submsg = true;
     }
     if (prefix == ((4ul << 3) | PB_WT_STRING)) {
@@ -380,6 +381,7 @@ bool pb_decode_MyMessage(struct MyMessage *msg, pb_read_fn r, void *user) {
         if (!pb_decode_varint_int32(&msg->many_integers[msg->many_integers_count], pb_bounded_read, &br)) { return false; }
         msg->many_integers_count++;
       }
+      if (br.len != 0) return false;
     }
     if (prefix == ((4ul << 3) | PB_WT_VARINT)) {
       if (msg->many_integers_count >= 4) { return false; }
@@ -395,6 +397,7 @@ bool pb_decode_MyMessage(struct MyMessage *msg, pb_read_fn r, void *user) {
         if (!pb_decode_fixed32(&msg->many_fixed[msg->many_fixed_count], pb_bounded_read, &br)) { return false; }
         msg->many_fixed_count++;
       }
+      if (br.len != 0) return false;
     }
     if (prefix == ((5ul << 3) | PB_WT_32BIT)) {
       if (msg->many_fixed_count >= 4) { return false; }
@@ -408,6 +411,7 @@ bool pb_decode_MyMessage(struct MyMessage *msg, pb_read_fn r, void *user) {
       if (msg->many_submsg_count >= 4) { return false; }
       struct pb_bounded_reader br = { .r = r, .user = user, .len = length };
       if (!pb_decode_SubMessage(&msg->many_submsg[msg->many_submsg_count], pb_bounded_read, &br)) { return false; }
+      if (br.len != 0) return false;
       msg->many_submsg_count++;
     }
   }
