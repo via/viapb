@@ -967,6 +967,21 @@ def generate_field_decode_statements(f: PpbField) -> str:
             if f.explicit_optional:
                 result += "  msg->has_%s = true;\n" % (f.name)
         elif f.fieldtype.pbtype == "MESSAGE":
+            if f.oneof and f.fieldtype.max_encoded_size > 0:
+                # If this is a submessage in a oneof and we are changing which
+                # branch is being used, we might be now reinterpretting bytes
+                # from a different oneof value because of the union. To prevent
+                # undefined behavior, ensure it is zeroed out
+                result += (
+                        "  if ((msg->which_%s != 0) && (msg->which_%s != %s)) {\n" % 
+                        (f.oneof,
+                         f.oneof,
+                         f.tag))
+                result += (
+                        "    %s = (struct %s){ 0 };\n" %
+                        (fieldname,
+                         field_type_name_to_cname(f.type_name)))
+                result += "  }\n"
             result += "  struct pb_bounded_reader br = { .r = r, .user = user, .len = length };\n"
             result += (
                 "  if (!pb_decode_%s(&%s, pb_bounded_read, &br)) { return false; }\n"
