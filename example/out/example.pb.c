@@ -103,13 +103,13 @@ unsigned pb_sizeof_MultiMessage(const struct MultiMessage *msg) {
 
   if (msg->which_some_oneof == PB_TAG_MultiMessage_part_one) {
     size += 1;  // Size of tag
-    unsigned element_size = pb_sizeof_varint(msg->some_oneof.part_one);
+    unsigned element_size = pb_sizeof_varint(msg->part_one);
     size += element_size;
   }
 
   if (msg->which_some_oneof == PB_TAG_MultiMessage_part_two) {
     size += 1;  // Size of tag
-    unsigned element_size = msg->some_oneof.part_two.len;
+    unsigned element_size = msg->part_two.len;
     size += pb_sizeof_varint(element_size);
     size += element_size;
   }
@@ -129,17 +129,17 @@ bool pb_encode_MultiMessage(const struct MultiMessage *msg, pb_write_fn w, void 
   if (msg->which_some_oneof == PB_TAG_MultiMessage_part_one) {
     uint8_t *ptr = scratch;
     ptr += pb_encode_varint(ptr, (2 << 3) | PB_WT_VARINT);
-    ptr += pb_encode_varint(ptr, msg->some_oneof.part_one);
+    ptr += pb_encode_varint(ptr, msg->part_one);
     if (!w(scratch, ptr - scratch, user)) { return false; }
   }
 
   if (msg->which_some_oneof == PB_TAG_MultiMessage_part_two) {
     uint8_t *ptr = scratch;
     ptr += pb_encode_varint(ptr, (3 << 3) | PB_WT_STRING);
-    unsigned elem_size = msg->some_oneof.part_two.len;
+    unsigned elem_size = msg->part_two.len;
     ptr += pb_encode_varint(ptr, elem_size);
     if (!w(scratch, ptr - scratch, user)) { return false; }
-    if (!w((const uint8_t *)msg->some_oneof.part_two.str, msg->some_oneof.part_two.len, user)) { return false; }
+    if (!w((const uint8_t *)msg->part_two.str, msg->part_two.len, user)) { return false; }
   }
 
   return true;
@@ -153,15 +153,15 @@ unsigned pb_encode_MultiMessage_to_buffer(uint8_t buffer[29], const struct Multi
 
   if (msg->which_some_oneof == PB_TAG_MultiMessage_part_one) {
     ptr += pb_encode_varint(ptr, (2 << 3) | PB_WT_VARINT);
-    ptr += pb_encode_varint(ptr, msg->some_oneof.part_one);
+    ptr += pb_encode_varint(ptr, msg->part_one);
   }
 
   if (msg->which_some_oneof == PB_TAG_MultiMessage_part_two) {
     ptr += pb_encode_varint(ptr, (3 << 3) | PB_WT_STRING);
-    unsigned elem_size = msg->some_oneof.part_two.len;
+    unsigned elem_size = msg->part_two.len;
     ptr += pb_encode_varint(ptr, elem_size);
-    memcpy(ptr, msg->some_oneof.part_two.str, msg->some_oneof.part_two.len);
-    ptr += msg->some_oneof.part_two.len;
+    memcpy(ptr, msg->part_two.str, msg->part_two.len);
+    ptr += msg->part_two.len;
   }
 
   return (ptr - buffer);
@@ -174,15 +174,15 @@ bool pb_decode_MultiMessage(struct MultiMessage *msg, pb_read_fn r, void *user) 
       if (!pb_decode_varint_int32(&msg->some_int, r, user)) { return false; }
     }
     if (prefix == ((2ul << 3) | PB_WT_VARINT)) {
-      if (!pb_decode_varint_int32(&msg->some_oneof.part_one, r, user)) { return false; }
+      if (!pb_decode_varint_int32(&msg->part_one, r, user)) { return false; }
       msg->which_some_oneof = 2;
     }
     if (prefix == ((3ul << 3) | PB_WT_STRING)) {
       uint32_t length;
       if (!pb_decode_varint_uint32(&length, r, user)) { return false; }
       if (length > 16) { return false; }
-      if (!r((uint8_t *)msg->some_oneof.part_two.str, length, user)) { return false; }
-      msg->some_oneof.part_two.len = length;
+      if (!r((uint8_t *)msg->part_two.str, length, user)) { return false; }
+      msg->part_two.len = length;
       msg->which_some_oneof = 3;
     }
   }

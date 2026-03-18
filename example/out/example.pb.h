@@ -47,7 +47,7 @@ struct MultiMessage {
   union {
     int32_t part_one;
     struct { char str[16]; unsigned len; } part_two;
-  } some_oneof;
+  };
 
 };
 
